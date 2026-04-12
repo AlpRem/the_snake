@@ -68,9 +68,9 @@ class Apple(GameObject):
     def __init__(self):
         super().__init__()
         self.body_color = APPLE_COLOR
-        self.position = self.init_position()
+        self.position = self.randomize_position()
 
-    def init_position(self):
+    def randomize_position(self):
         x = randint(0, GRID_WIDTH - 1) * GRID_SIZE
         y = randint(0, GRID_HEIGHT - 1) * GRID_SIZE
         return (x, y)
@@ -161,7 +161,7 @@ def main():
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.reset()
         if snake.get_head_position() == apple.position:
-            apple.position = apple.init_position()
+            apple.position = apple.randomize_position()
             snake.is_position_apple = True
         apple.draw()
         snake.draw()

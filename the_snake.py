@@ -27,7 +27,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
-SPEED = 20
+SPEED = 10
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -64,11 +64,33 @@ class GameObject:
     def draw(self):
         pass
 
-class Snake(GameObject):
-    def __init__(self, last):
+class Apple(GameObject):
+    def __init__(self):
         super().__init__()
-        self.last = last
-        self.positions = []
+        self.body_color = APPLE_COLOR
+        self.position = self.init_position()
+
+    def init_position(self):
+        x = randint(0, GRID_WIDTH - 1) * GRID_SIZE
+        y = randint(0, GRID_HEIGHT - 1) * GRID_SIZE
+        return (x, y)
+
+    # Метод draw класса Apple
+    def draw(self):
+        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(self.surface, self.body_color, rect)
+        pygame.draw.rect(self.surface, BORDER_COLOR, rect, 1)
+
+
+class Snake(GameObject):
+    def __init__(self):
+        super().__init__()
+        self.last = None
+        self.body_color = SNAKE_COLOR
+        self.positions = [self.position]
+        self.direction = RIGHT
+        self.next_direction = None
+        self.is_position_apple = False
 
     # Метод draw класса Snake
     def draw(self):
@@ -87,43 +109,64 @@ class Snake(GameObject):
             last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
-class Apple(GameObject):
-    def __init__(self):
-        super().__init__()
-        self.body_color = APPLE_COLOR
-        self.position = self._init_position()
+    def reset(self):
+        self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        self.positions = [self.position]
+        self.direction = RIGHT
+        self.next_direction = None
+        self.last = None
 
-    def _init_position(self):
-        x = randint(0, GRID_WIDTH - 1) * GRID_SIZE
-        y = randint(0, GRID_HEIGHT - 1) * GRID_SIZE
-        return (x, y)
+    def get_head_position(self):
+        return self.positions[0]
 
-    # Метод draw класса Apple
-    def draw(self):
-        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
-        pygame.draw.rect(self.surface, self.body_color, rect)
-        pygame.draw.rect(self.surface, BORDER_COLOR, rect, 1)
+    def move(self):
+        head_x, head_y = self.get_head_position()
+        dir_x, dir_y = self.direction
+
+        new_head = (
+            (head_x + dir_x * GRID_SIZE) % SCREEN_WIDTH,
+            (head_y + dir_y * GRID_SIZE) % SCREEN_HEIGHT
+        )
+
+        self.positions.insert(0, new_head)
+        if self.is_position_apple:
+            self.is_position_apple = False
+        else:
+            self.last = self.positions.pop()
+
+    # Метод обновления направления после нажатия на кнопку
+    def update_direction(self):
+        if self.next_direction:
+            self.direction = self.next_direction
+            self.next_direction = None
+
+    def check_position_head(self):
+        head = self.get_head_position()
+        return head in self.positions[1:]
 
 def main():
     # Инициализация PyGame:
     pygame.init()
     # Тут нужно создать экземпляры классов.
     apple = Apple()
+    snake = Snake()
 
 
     while True:
         clock.tick(SPEED)
-        handle_keys(apple)
+        handle_keys(snake)
+        snake.update_direction()
+        snake.move()
+        if snake.check_position_head():
+            screen.fill(BOARD_BACKGROUND_COLOR)
+            snake.reset()
+        if snake.get_head_position() == apple.position:
+            apple.position = apple.init_position()
+            snake.is_position_apple = True
         apple.draw()
+        snake.draw()
         pygame.display.update()
-        # Тут опишите основную логику игры.
-        # ...
+
 
 if __name__ == '__main__':
     main()
-
-# Метод обновления направления после нажатия на кнопку
-# def update_direction(self):
-#     if self.next_direction:
-#         self.direction = self.next_direction
-#         self.next_direction = None

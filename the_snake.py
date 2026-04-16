@@ -63,10 +63,11 @@ class GameObject:
     def draw(self):
         """Отображение игрового элемента на поле."""
 
-    def draw_point(self, body_color, position):
+    def draw_point(self, body_color, position, is_border=True):
         rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(self.surface, body_color, rect)
-        pygame.draw.rect(self.surface, BORDER_COLOR, rect, 1)
+        if is_border:
+            pygame.draw.rect(self.surface, BORDER_COLOR, rect, 1)
 
 
 class Apple(GameObject):
@@ -104,15 +105,13 @@ class Snake(GameObject):
         self.body_color = SNAKE_COLOR
         self.reset()
 
-    # Метод draw класса Snake
     def draw(self):
         """Отображение змейки на игровом поле."""
         for position in self.positions[:-1]:
             self.draw_point(self.body_color, position)
-        self.draw_point(self.body_color, self.positions[0])
+        self.draw_point(self.body_color, self.get_head_position())
         if self.last:
-            last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
-            pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
+            self.draw_point(BOARD_BACKGROUND_COLOR, self.last, is_border=False)
 
     def reset(self):
         """Сброс всех атрибутов змейки и задание их по-умолчанию."""

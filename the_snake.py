@@ -63,6 +63,11 @@ class GameObject:
     def draw(self):
         """Отображение игрового элемента на поле."""
 
+    def draw_point(self, body_color, position):
+        rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(self.surface, body_color, rect)
+        pygame.draw.rect(self.surface, BORDER_COLOR, rect, 1)
+
 
 class Apple(GameObject):
     """Игровой элемент - Яблоко."""
@@ -86,12 +91,9 @@ class Apple(GameObject):
                 self.position = position
                 return
 
-    # Метод draw класса Apple
     def draw(self):
         """Отображение яблока на игровом поле."""
-        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
-        pygame.draw.rect(self.surface, self.body_color, rect)
-        pygame.draw.rect(self.surface, BORDER_COLOR, rect, 1)
+        self.draw_point(self.body_color, self.position)
 
 
 class Snake(GameObject):
@@ -110,14 +112,8 @@ class Snake(GameObject):
     def draw(self):
         """Отображение змейки на игровом поле."""
         for position in self.positions[:-1]:
-            rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
-            pygame.draw.rect(screen, self.body_color, rect)
-            pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
-
-        head_rect = pygame.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
-        pygame.draw.rect(screen, self.body_color, head_rect)
-        pygame.draw.rect(screen, BORDER_COLOR, head_rect, 1)
-
+            self.draw_point(self.body_color, position)
+        self.draw_point(self.body_color, self.positions[0])
         if self.last:
             last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)

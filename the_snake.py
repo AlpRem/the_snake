@@ -67,16 +67,23 @@ class GameObject:
 class Apple(GameObject):
     """Игровой элемент - Яблоко."""
 
-    def __init__(self, body_color=APPLE_COLOR):
+    def __init__(self, body_color=APPLE_COLOR, occupied_points=None):
         super().__init__()
         self.body_color = body_color
-        self.position = self.randomize_position()
+        self.randomize_position()
 
-    def randomize_position(self):
+    def randomize_position(self, occupied_points=None):
         """Получения случайного значения координат на игровом поле."""
-        x = randint(0, GRID_WIDTH - 1) * GRID_SIZE
-        y = randint(0, GRID_HEIGHT - 1) * GRID_SIZE
-        return (x, y)
+        if occupied_points is None:
+            occupied_points = {(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)}
+
+        while True:
+            x = randint(0, GRID_WIDTH - 1) * GRID_SIZE
+            y = randint(0, GRID_HEIGHT - 1) * GRID_SIZE
+            position = (x, y)
+
+            if position not in occupied_points:
+                self.position = position
 
     # Метод draw класса Apple
     def draw(self):
@@ -157,8 +164,8 @@ class Snake(GameObject):
 def main():
     """Главная точка входа в программу."""
     pygame.init()
-    apple = Apple()
     snake = Snake()
+    apple = Apple(occupied_points=snake.positions)
 
     while True:
         clock.tick(SPEED)
@@ -169,8 +176,8 @@ def main():
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.reset()
         if snake.get_head_position() == apple.position:
-            apple.position = apple.randomize_position()
             snake.is_position_apple = True
+            apple.randomize_position(snake.positions)
         apple.draw()
         snake.draw()
         pygame.display.update()

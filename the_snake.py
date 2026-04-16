@@ -101,12 +101,8 @@ class Snake(GameObject):
 
     def __init__(self):
         super().__init__()
-        self.last = None
         self.body_color = SNAKE_COLOR
-        self.positions = [self.position]
-        self.direction = RIGHT
-        self.next_direction = None
-        self.length = 1
+        self.reset()
 
     # Метод draw класса Snake
     def draw(self):

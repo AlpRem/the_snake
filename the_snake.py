@@ -20,7 +20,7 @@ APPLE_COLOR = (255, 0, 0)
 
 SNAKE_COLOR = (0, 255, 0)
 
-SPEED = 20
+SPEED = 10
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
@@ -70,7 +70,7 @@ class Apple(GameObject):
     def __init__(self, body_color=APPLE_COLOR, occupied_points=None):
         super().__init__()
         self.body_color = body_color
-        self.randomize_position()
+        self.randomize_position(occupied_points)
 
     def randomize_position(self, occupied_points=None):
         """Получения случайного значения координат на игровом поле."""
@@ -104,7 +104,7 @@ class Snake(GameObject):
         self.positions = [self.position]
         self.direction = RIGHT
         self.next_direction = None
-        self.is_position_apple = False
+        self.length = 1
 
     # Метод draw класса Snake
     def draw(self):
@@ -129,6 +129,7 @@ class Snake(GameObject):
         self.direction = RIGHT
         self.next_direction = None
         self.last = None
+        self.length = 1
 
     def get_head_position(self):
         """Возвращение позиции головы змейки."""
@@ -145,10 +146,10 @@ class Snake(GameObject):
         )
 
         self.positions.insert(0, new_head)
-        if self.is_position_apple:
-            self.is_position_apple = False
-        else:
+        if len(self.positions) > self.length:
             self.last = self.positions.pop()
+        else:
+            self.last = None
 
     def update_direction(self):
         """Обновление направления движения змейки."""
@@ -176,8 +177,9 @@ def main():
         if snake.check_position_head():
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.reset()
+            apple.randomize_position(snake.positions)
         if snake.get_head_position() == apple.position:
-            snake.is_position_apple = True
+            snake.length += 1
             apple.randomize_position(snake.positions)
         apple.draw()
         snake.draw()

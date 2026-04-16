@@ -49,7 +49,7 @@ def handle_keys(game_object):
             key = event.key
             new_direction = traffic_manager.get((key, game_object.direction))
             if new_direction:
-                game_object.next_direction = new_direction
+                game_object.update_direction(new_direction)
 
 
 class GameObject:
@@ -121,7 +121,6 @@ class Snake(GameObject):
             self.direction = choice([UP, RIGHT, DOWN, LEFT])
         else:
             self.direction = RIGHT
-        self.next_direction = None
         self.last = None
         self.length = 1
 
@@ -145,11 +144,10 @@ class Snake(GameObject):
         else:
             self.last = None
 
-    def update_direction(self):
+    def update_direction(self, new_direction):
         """Обновление направления движения змейки."""
-        if self.next_direction:
-            self.direction = self.next_direction
-            self.next_direction = None
+        if new_direction:
+            self.direction = new_direction
 
     def check_position_head(self):
         """Проверка на пересечения головы змейки с ее туловищем."""
@@ -177,7 +175,6 @@ def main():
     while True:
         clock.tick(SPEED)
         handle_keys(snake)
-        snake.update_direction()
         snake.move()
         if snake.check_position_head():
             screen.fill(BOARD_BACKGROUND_COLOR)

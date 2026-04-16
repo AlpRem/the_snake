@@ -62,7 +62,6 @@ class GameObject:
 
     def draw(self):
         """Метод отображения игрового элемента."""
-        pass
 
 
 class Apple(GameObject):

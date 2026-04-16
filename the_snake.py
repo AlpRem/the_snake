@@ -84,6 +84,7 @@ class Apple(GameObject):
 
             if position not in occupied_points:
                 self.position = position
+                return
 
     # Метод draw класса Apple
     def draw(self):

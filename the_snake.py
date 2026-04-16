@@ -39,6 +39,7 @@ traffic_manager = {
     (pygame.K_RIGHT, DOWN): RIGHT,
 }
 
+
 def handle_keys(game_object):
     """Обработки действий пользователя."""
     for event in pygame.event.get():
@@ -64,6 +65,7 @@ class GameObject:
         """Отображение игрового элемента на поле."""
 
     def draw_point(self, body_color, position, is_border=True):
+        """Отображение точки игрового элемента на поле."""
         rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(self.surface, body_color, rect)
         if is_border:

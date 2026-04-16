@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, choice
 
 import pygame
 
@@ -103,7 +103,7 @@ class Snake(GameObject):
     def __init__(self):
         super().__init__()
         self.body_color = SNAKE_COLOR
-        self.reset()
+        self.reset(is_random_traffic=False)
 
     def draw(self):
         """Отображение змейки на игровом поле."""
@@ -113,11 +113,14 @@ class Snake(GameObject):
         if self.last:
             self.draw_point(BOARD_BACKGROUND_COLOR, self.last, is_border=False)
 
-    def reset(self):
+    def reset(self, is_random_traffic=True):
         """Сброс всех атрибутов змейки и задание их по-умолчанию."""
         self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.positions = [self.position]
-        self.direction = RIGHT
+        if is_random_traffic:
+            self.direction = choice([UP, RIGHT, DOWN, LEFT])
+        else:
+            self.direction = RIGHT
         self.next_direction = None
         self.last = None
         self.length = 1

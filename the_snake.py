@@ -28,6 +28,16 @@ pygame.display.set_caption('Змейка')
 
 clock = pygame.time.Clock()
 
+traffic_manager = {
+    (pygame.K_UP, RIGHT): UP,
+    (pygame.K_UP, LEFT): UP,
+    (pygame.K_DOWN, RIGHT): DOWN,
+    (pygame.K_DOWN, LEFT): DOWN,
+    (pygame.K_LEFT, UP): LEFT,
+    (pygame.K_LEFT, DOWN): LEFT,
+    (pygame.K_RIGHT, UP): RIGHT,
+    (pygame.K_RIGHT, DOWN): RIGHT,
+}
 
 def handle_keys(game_object):
     """Функция обработки действий пользователя"""
@@ -36,14 +46,10 @@ def handle_keys(game_object):
             pygame.quit()
             raise SystemExit
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and game_object.direction != DOWN:
-                game_object.next_direction = UP
-            elif event.key == pygame.K_DOWN and game_object.direction != UP:
-                game_object.next_direction = DOWN
-            elif event.key == pygame.K_LEFT and game_object.direction != RIGHT:
-                game_object.next_direction = LEFT
-            elif event.key == pygame.K_RIGHT and game_object.direction != LEFT:
-                game_object.next_direction = RIGHT
+            key = event.key
+            new_direction = traffic_manager.get((key, game_object.direction))
+            if new_direction:
+                game_object.next_direction = new_direction
 
 
 class GameObject:

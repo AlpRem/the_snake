@@ -1,12 +1,13 @@
 from random import choice, randint
+from typing import Final
 
 import pygame
 
-SCREEN_WIDTH: int = 640
-SCREEN_HEIGHT: int = 480
-GRID_SIZE: int = 20
-GRID_WIDTH: int = SCREEN_WIDTH // GRID_SIZE
-GRID_HEIGHT: int = SCREEN_HEIGHT // GRID_SIZE
+SCREEN_WIDTH: Final = 640
+SCREEN_HEIGHT: Final = 480
+GRID_SIZE: Final = 20
+GRID_WIDTH: Final = SCREEN_WIDTH // GRID_SIZE
+GRID_HEIGHT: Final = SCREEN_HEIGHT // GRID_SIZE
 
 UP: tuple[int, int] = (0, -1)
 DOWN: tuple[int, int] = (0, 1)
@@ -51,9 +52,9 @@ def handle_keys(game_object) -> None:
             raise SystemExit
         elif event.type == pygame.KEYDOWN:
             key = event.key
-            new_direction = traffic_manager.get((key, game_object.direction))
-            if new_direction:
-                game_object.update_direction(new_direction)
+            new_direction = traffic_manager.get((key, game_object.direction),
+                                                game_object.direction)
+            game_object.direction = new_direction
 
 
 class GameObject:
@@ -108,7 +109,7 @@ class Snake(GameObject):
     def __init__(self) -> None:
         super().__init__()
         self.body_color = SNAKE_COLOR
-        self.reset(is_random_traffic=False)
+        self.reset()
 
     def draw(self) -> None:
         """Отображение змейки на игровом поле."""
@@ -122,10 +123,7 @@ class Snake(GameObject):
         """Сброс всех атрибутов змейки и задание их по-умолчанию."""
         self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.positions = [self.position]
-        if is_random_traffic:
-            self.direction = choice([UP, RIGHT, DOWN, LEFT])
-        else:
-            self.direction = RIGHT
+        self.direction = RIGHT
         self.last = None
         self.length = 1
 
@@ -148,11 +146,6 @@ class Snake(GameObject):
             self.last = self.positions.pop()
         else:
             self.last = None
-
-    def update_direction(self, new_direction) -> None:
-        """Обновление направления движения змейки."""
-        if new_direction:
-            self.direction = new_direction
 
     def check_position_head(self) -> bool:
         """Проверка на пересечения головы змейки с ее туловищем."""

@@ -152,13 +152,6 @@ class Snake(GameObject):
         head = self.get_head_position()
         return head in self.positions[1:]
 
-    def to_eat(self, apple) -> bool:
-        """Змейка съедает яблоко."""
-        if self.get_head_position() == apple.position:
-            self.change_length()
-            return True
-        return False
-
     def change_length(self) -> None:
         """Изменение длины змейки."""
         self.length += 1
@@ -178,7 +171,8 @@ def main() -> None:
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.reset()
             apple.randomize_position(snake.positions)
-        if snake.to_eat(apple):
+        if snake.get_head_position() == apple.position:
+            snake.change_length()
             apple.randomize_position(snake.positions)
         apple.draw()
         snake.draw()

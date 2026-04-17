@@ -54,7 +54,7 @@ def handle_keys(game_object) -> None:
             key = event.key
             new_direction = traffic_manager.get((key, game_object.direction),
                                                 game_object.direction)
-            game_object.direction = new_direction
+            game_object.update_direction(new_direction)
 
 
 class GameObject:
@@ -155,6 +155,10 @@ class Snake(GameObject):
     def change_length(self) -> None:
         """Изменение длины змейки."""
         self.length += 1
+
+    def update_direction(self, new_direction) -> None:
+        """Обновление направления движения змейки."""
+        self.direction = new_direction
 
 
 def main() -> None:

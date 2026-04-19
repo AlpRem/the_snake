@@ -1,13 +1,13 @@
-from random import randint
+from random import choice, randint
 from typing import Final
 
 import pygame
 
-SCREEN_WIDTH: Final = 640
-SCREEN_HEIGHT: Final = 480
-GRID_SIZE: Final = 20
-GRID_WIDTH: Final = SCREEN_WIDTH // GRID_SIZE
-GRID_HEIGHT: Final = SCREEN_HEIGHT // GRID_SIZE
+SCREEN_WIDTH: Final[int] = 640
+SCREEN_HEIGHT: Final[int] = 480
+GRID_SIZE: Final[int] = 20
+GRID_WIDTH: Final[int] = SCREEN_WIDTH // GRID_SIZE
+GRID_HEIGHT: Final[int] = SCREEN_HEIGHT // GRID_SIZE
 
 UP: tuple[int, int] = (0, -1)
 DOWN: tuple[int, int] = (0, 1)
@@ -22,7 +22,7 @@ APPLE_COLOR: tuple[int, int, int] = (255, 0, 0)
 
 SNAKE_COLOR: tuple[int, int, int] = (0, 255, 0)
 
-SPEED: int = 10
+SPEED: Final[int] = 10
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
@@ -110,6 +110,7 @@ class Snake(GameObject):
         super().__init__()
         self.body_color = SNAKE_COLOR
         self.reset()
+        self.direction = RIGHT
 
     def draw(self) -> None:
         """Отображение змейки на игровом поле."""
@@ -119,11 +120,11 @@ class Snake(GameObject):
         if self.last:
             self.draw_point(BOARD_BACKGROUND_COLOR, self.last, is_border=False)
 
-    def reset(self, is_random_traffic=True) -> None:
+    def reset(self) -> None:
         """Сброс всех атрибутов змейки и задание их по-умолчанию."""
         self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.positions = [self.position]
-        self.direction = RIGHT
+        self.direction = choice([UP, RIGHT, DOWN, LEFT])
         self.last = None
         self.length = 1
 
